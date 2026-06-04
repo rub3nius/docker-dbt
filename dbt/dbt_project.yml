@@ -1,0 +1,9 @@
+name: 'proyecto_dbt'
+version: '1.0.0'
+config-version: 2
+
+profile: 'default'
+
+models:
+  proyecto_dbt:
+    materialized: table

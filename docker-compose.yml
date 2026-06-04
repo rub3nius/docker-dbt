@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver_local
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${SQL_PASSWORD}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+  dbt:
+    build:
+      context: .
+      dockerfile: Dockerfile.dbt
+    container_name: dbt_core_local
+    volumes:
+      - ./dbt:/usr/app/dbt_project
+    environment:
+      - DBT_PROFILES_DIR=/usr/app/dbt_project
+      - DBT_ENV_SECRET_PASSWORD=${SQL_PASSWORD}
+    depends_on:
+      - sqlserver
+    command: tail -f /dev/null
+    stdin_open: true
+    tty: true
+volumes:
+  sqlserver_data:
